@@ -5,7 +5,7 @@ import time
 
 mpl.rcParams['figure.dpi'] = 120
 
-def theThing(noise: float, extent: [] = None):
+def drawHeatmap(noise: float, extent: [] = None):
     points = []
     if extent is not None:
         points = [Point(extent[0], extent[2]), Point(extent[1], extent[3])]
@@ -48,8 +48,8 @@ def theThing(noise: float, extent: [] = None):
 
 
 plt.subplot(1, 2, 1)
-extent = theThing(0.3)
+extent = drawHeatmap(0.3)
 
 plt.subplot(1, 2, 2)
-_ = theThing(0.05, extent)
+_ = drawHeatmap(0.05, extent)
 plt.show()

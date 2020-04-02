@@ -30,23 +30,40 @@ class Params:
     def __str__(self):
         return f'Params(step: {toStr(self.step)}, a:{toStr(self.a)}, b:{toStr(self.b)})'
 
+    @staticmethod
+    def defaultWithCycle():
+        return Params(0.01, 0.02, 0.6)
+
 sqrt = lambda x: x ** .5
 sq = lambda x: x ** 2
-noiseShift = lambda: np.random.normal(0, 0.1, 2).tolist()
+noiseShift = lambda: np.random.normal(size = 2).tolist()
 
 class Model:
     getX = staticmethod(lambda p: p.b)
     getY = staticmethod(lambda p: p.b / Model.aPlusBSq(p))
     getStationaryPoint = staticmethod(lambda p: Point(Model.getX(p), Model.getY(p)))
+
+    getU = staticmethod(lambda p: 2 * sq(p.b) / Model.aPlusBSq(p))
+    getV = staticmethod(lambda p: Model.aPlusBSq(p))
+    aPlusBSq = staticmethod(lambda p: p.a + sq(p.b))
     getFx = staticmethod(lambda p: Model.getU(p) - 1)
     getFy = staticmethod(lambda p: Model.getV(p))
     getGx = staticmethod(lambda p: -Model.getU(p))
     getGy = staticmethod(lambda p: -Model.getV(p))
-    getU = staticmethod(lambda p: 2 * sq(p.b) / Model.aPlusBSq(p))
-    getV = staticmethod(lambda p: Model.aPlusBSq(p))
-    aPlusBSq = staticmethod(lambda p: p.a + sq(p.b))
+    getDifferentials = staticmethod(lambda p: (Model.getFx(p), Model.getFy(p), Model.getGx(p), Model.getGy(p)))
+
     getF = staticmethod(lambda p, params: -p.x + params.a * p.y + sq(p.x) * p.y)
     getG = staticmethod(lambda p, params: params.b - params.a * p.y - sq(p.x) * p.y)
+    getSystemPoint = staticmethod(lambda p, params: (Model.getF(p, params), Model.getG(p, params)))
+
+    @staticmethod
+    def getSystemPointDivisor(p: Point, params: Params) -> float:
+        return sqrt(sq(Model.getF(p, params)) + sq(Model.getG(p, params)))
+
+    @staticmethod
+    def getSystemPointNormalized(p: Point, params: Params) -> Point:
+        divisor = Model.getSystemPointDivisor(p, params)
+        return Point(-Model.getG(p, params) / divisor, Model.getF(p, params) / divisor)
 
 class RK:
     @staticmethod
@@ -82,3 +99,7 @@ class RK:
             prev.x + 1.0 / 6.0 * (K1 + 2 * K2 + 2 * K3 + K4),
             prev.y + 1.0 / 6.0 * (L1 + 2 * L2 + 2 * L3 + L4)
         )
+
+def split_list(a_list):
+    half = len(a_list)//2
+    return a_list[:half], a_list[half:]

@@ -28,6 +28,3 @@ noise_1, noise_2 = 0.003, 0.001
 confidence_levels = [0.65, 0.95, 0.99]
 mod_system_with_ellipses(params, noise_1)
 mod_system_with_ellipses(params, noise_2)
-
-# todo: fix scale
-# todo: fix ellipses

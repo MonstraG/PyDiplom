@@ -10,7 +10,7 @@ matrixSolutionsCache = {}
 # Produces ellipse, how big the cloud stochasticClouds should be
 def drawEllipse(params: Params, noise: float, color: str = 'blue', probability: float = 0.95):
     def cacheLambdasAndVectors(params: Params, p: Point):
-        a, b, c, d = Model.getFx(params), Model.getFy(params), Model.getGx(params), Model.getGy(params)
+        a, b, c, d = Model.getDifferentials(params)
         denominator = 2 * (a + d) * (a * d - b * c)
         w1 = (-b * c * d * sq(p.x) - a * sq(b) * sq(p.y)) / (a * denominator) - sq(p.x) / (2 * a)
         w2 = (a * b * sq(p.y) + c * d * sq(p.x)) / denominator
@@ -21,25 +21,21 @@ def drawEllipse(params: Params, noise: float, color: str = 'blue', probability: 
         vector1, vector2 = Point(vectors[0][0], vectors[0][1]), Point(vectors[1][0], vectors[1][1])
         matrixSolutionsCache[str(params)] = [lambda1, lambda2, vector1, vector2]
 
-    def getZNoAngle(noise: float, q: float, lmbd: float) -> float:
-        return noise * q * sqrt(2 * lmbd)
-
     p = Model.getStationaryPoint(params)
-    cache = matrixSolutionsCache.get(str(params), None)
+    cache = matrixSolutionsCache.get(str(params))
     if cache is None:
         cacheLambdasAndVectors(params, p)
-    cache = matrixSolutionsCache.get(str(params), None)
+    cache = matrixSolutionsCache.get(str(params))
     lambda1, lambda2, vector1, vector2 = cache
 
     resultX, resultY = [], []
     q = sqrt(-math.log(1 - probability))  # 0.95 - probability
-    z1NoAngle, z2NoAngle = getZNoAngle(noise, q, lambda1),  getZNoAngle(noise, q, lambda2)
-    deltaDivisor = vector1.x * vector2.y - vector1.y * vector2.x
+    z1NoAngle, z2NoAngle = noise * q * sqrt(2 * lambda1), noise * q * sqrt(2 * lambda2)
     for i in range(361):
         radians = math.radians(i)
         z1, z2 = z1NoAngle * math.cos(radians), z2NoAngle * math.sin(radians)
-        resultX.append(p.x + (z1 * vector2.y - z2 * vector1.y) / deltaDivisor)
-        resultY.append(p.y + (z2 * vector1.x - z1 * vector2.x) / deltaDivisor)
+        resultX.append(p.x + (z1 * vector2.y - z2 * vector1.y))
+        resultY.append(p.y + (z2 * vector1.x - z1 * vector2.x))
     plt.plot(resultX, resultY, color = color, alpha = 0.5)
 
 if __name__ == '__main__':

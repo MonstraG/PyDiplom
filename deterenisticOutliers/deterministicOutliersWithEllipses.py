@@ -12,6 +12,6 @@ params = Params(0.01, 0.02, 0.13)
 
 lines(params)
 drawEllipse(params, 0.01, 'green')
-drawEllipse(params, 0.02, 'red')
+drawEllipse(params, 0.03, 'red')
 repulsive(params)
 plt.show()
