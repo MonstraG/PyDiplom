@@ -5,15 +5,15 @@ from coolStuff.limitCycle import getLimitCycle
 from defines import Model, Params, Point, sq, transformPointList
 
 def getFTS(params: Params, limitCycle: [] = None):
-    cycle = limitCycle if limitCycle is None else getLimitCycle(params)
+    cycle = getLimitCycle(params) if limitCycle is None else limitCycle
     r, h = [1.0], [0.0]
+    fx, fy, gx, gy = Model.getDifferentials(params)
     for cyclePoint in cycle:
-        fx, fy, gx, gy = Model.getDifferentials(params)
         p = Model.getSystemPointNormalized(cyclePoint, params)
-
-        a = (p.x * (p.x * 2 * fx + p.y * (gx + fy)) + p.y * (p.x * (fy + gx) + p.y * 2 * gy))
-        b = sq(p.x) * sq(cyclePoint.x) + sq(p.y) * sq(cyclePoint.y)
+        a = (p.x * (p.x * (gx + fy) + p.x * 2 * fx) +
+             p.y * (p.y * (gx + fy) + p.y * 2 * gy))
         r.append(r[-1] * (math.e ** (a * params.step)))
+        b = sq(p.x) * sq(cyclePoint.x) + sq(p.y) * sq(cyclePoint.y)
         h.append(h[-1] + b / r[-1] * params.step)
 
     c = r[-1] * h[-1] / (1 - r[-1])

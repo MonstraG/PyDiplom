@@ -29,8 +29,8 @@ def drawEllipse(params: Params, noise: float, color: str = 'blue', probability: 
     lambda1, lambda2, vector1, vector2 = cache
 
     resultX, resultY = [], []
-    q = sqrt(-math.log(1 - probability))  # 0.95 - probability
-    z1NoAngle, z2NoAngle = noise * q * sqrt(2 * lambda1), noise * q * sqrt(2 * lambda2)
+    q = rt(-math.log(1 - probability))  # 0.95 - probability
+    z1NoAngle, z2NoAngle = noise * q * rt(2 * lambda1), noise * q * rt(2 * lambda2)
     for i in range(361):
         radians = math.radians(i)
         z1, z2 = z1NoAngle * math.cos(radians), z2NoAngle * math.sin(radians)

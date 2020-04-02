@@ -32,20 +32,18 @@ class Params:
 
     @staticmethod
     def defaultWithCycle():
-        return Params(0.01, 0.02, 0.6)
+        return Params(0.001, 0.02, 0.6)
 
-sqrt = lambda x: x ** .5
+rt = lambda x: x ** .5
 sq = lambda x: x ** 2
 noiseShift = lambda: np.random.normal(size = 2).tolist()
 
 class Model:
-    getX = staticmethod(lambda p: p.b)
-    getY = staticmethod(lambda p: p.b / Model.aPlusBSq(p))
-    getStationaryPoint = staticmethod(lambda p: Point(Model.getX(p), Model.getY(p)))
+    aPlusBSq = staticmethod(lambda p: p.a + sq(p.b))
+    getStationaryPoint = staticmethod(lambda p: Point(p.b, p.b / Model.aPlusBSq(p)))
 
     getU = staticmethod(lambda p: 2 * sq(p.b) / Model.aPlusBSq(p))
     getV = staticmethod(lambda p: Model.aPlusBSq(p))
-    aPlusBSq = staticmethod(lambda p: p.a + sq(p.b))
     getFx = staticmethod(lambda p: Model.getU(p) - 1)
     getFy = staticmethod(lambda p: Model.getV(p))
     getGx = staticmethod(lambda p: -Model.getU(p))
@@ -57,13 +55,10 @@ class Model:
     getSystemPoint = staticmethod(lambda p, params: (Model.getF(p, params), Model.getG(p, params)))
 
     @staticmethod
-    def getSystemPointDivisor(p: Point, params: Params) -> float:
-        return sqrt(sq(Model.getF(p, params)) + sq(Model.getG(p, params)))
-
-    @staticmethod
     def getSystemPointNormalized(p: Point, params: Params) -> Point:
-        divisor = Model.getSystemPointDivisor(p, params)
-        return Point(-Model.getG(p, params) / divisor, Model.getF(p, params) / divisor)
+        f, g = Model.getF(p, params), Model.getG(p, params)
+        divisor = rt(sq(f) + sq(g))
+        return Point(-g / divisor, f / divisor)
 
 class RK:
     @staticmethod
@@ -71,8 +66,8 @@ class RK:
         newPoint = RK.getNewPoint(prev, params)
         noise_x, noise_y = noiseShift()
         return Point(
-            newPoint.x + noise * sqrt(params.step) * noise_x * prev.x,
-            newPoint.y + noise * sqrt(params.step) * noise_y * prev.y
+            newPoint.x + noise * rt(params.step) * noise_x * prev.x,
+            newPoint.y + noise * rt(params.step) * noise_y * prev.y
         )
 
     @staticmethod

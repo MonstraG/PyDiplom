@@ -1,4 +1,3 @@
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 from defines import RK, Model, Point, Params, transformPointList
@@ -36,3 +35,4 @@ if __name__ == '__main__':
     plt.title(f'Limit cycle (intersectEpsilon: {intersectEpsilon})\n {params}')
     plt.grid(True)
     plt.show()
+    

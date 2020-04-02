@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 from coolStuff.fts import getFTS
 from coolStuff.limitCycle import getLimitCycle
-from defines import Params, Model, sqrt, sq, Point, transformPointList
+from defines import Params, Model, rt, sq, Point, transformPointList
 from modelling.stochasticClouds import mod_system_with_noise
 
 mpl.rcParams['figure.dpi'] = 120
@@ -16,7 +16,7 @@ def getSleeve(params: Params, noise: float):
     result1, result2 = [], []
     for cyclePoint, fts in zip(limitCycle, getFTS(params, limitCycle)):
         normalPoint = Model.getSystemPointNormalized(cyclePoint, params)
-        multiplier = q * noise * sqrt(2 * fts.y)
+        multiplier = q * noise * rt(2 * fts.y)
         shiftX, shiftY = multiplier * normalPoint.x * cyclePoint.x, multiplier * normalPoint.y * cyclePoint.y
         result1.append(Point(cyclePoint.x + shiftX, cyclePoint.y + shiftY))
         result2.append(Point(cyclePoint.x - shiftX, cyclePoint.y - shiftY))
@@ -26,8 +26,9 @@ def getSleeve(params: Params, noise: float):
     plt.plot(x, y, color = 'red', alpha = 0.7)
 
 if __name__ == '__main__':
-    params = Params(0.001, 0.02, 0.6)
+    params = Params.defaultWithCycle()
     noise = 0.03
     getSleeve(params, noise)
-    mod_system_with_noise(params, noise, 'blue', 100000)
+    mod_system_with_noise(params, noise, 'blue', 1000000)
+    plt.title(f'Sleeve, {params}')
     plt.show()
