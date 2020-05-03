@@ -2,10 +2,13 @@ import math
 import matplotlib.pyplot as plt
 
 from coolStuff.limitCycle import getLimitCycle
-from defines import Model, Params, Point, sq, transformPointList
+from defines import Model, Params, Point, sq, transformPointList, split_list
 
-def getFTS(params: Params, limitCycle: [] = None):
+def getFTS(params: Params, limitCycle: [] = None, reshuffleCycle: bool = False):
     cycle = getLimitCycle(params) if limitCycle is None else limitCycle
+    if reshuffleCycle:
+        left, right = split_list(cycle)
+        cycle = right + left
     r, h = [1.0], [0.0]
     fx, fy, gx, gy = Model.getDifferentials(params)
     for cyclePoint in cycle:
@@ -23,6 +26,7 @@ if __name__ == '__main__':
     params = Params.defaultWithCycle()
     points = getFTS(params)
     x, y = transformPointList(points)
+
     plt.plot(x, y, color = 'red', alpha = 0.7)
 
     plt.title(f'FTS, {params}')

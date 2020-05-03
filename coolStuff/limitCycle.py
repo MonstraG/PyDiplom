@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from defines import RK, Model, Point, Params, transformPointList
 
 def getLimitCycle(params: Params, intersectEpsilon: float = 0.000001):
-    current = Point(1.0, 1.0)
+    current = Point(4.0, 0.1)
     result = []
     stPoint = Model.getStationaryPoint(params)
     x0, y0 = stPoint.x, stPoint.y
@@ -35,4 +35,3 @@ if __name__ == '__main__':
     plt.title(f'Limit cycle (intersectEpsilon: {intersectEpsilon})\n {params}')
     plt.grid(True)
     plt.show()
-    
