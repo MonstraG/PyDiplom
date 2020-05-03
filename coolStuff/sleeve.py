@@ -24,10 +24,7 @@ def getSleeve(params: Params, noise: float, reshuffleCycle: bool = False):
     x, y = transformPointList(result2)
     plt.plot(x, y, color = 'red', alpha = 0.7)
 
-if __name__ == '__main__':
-    params = Params.defaultWithCycle()
-    noise = 0.03
-    reshuffleCycle = True
+def sleevePlot(params: Params, noise: float, reshuffleCycle: bool):
     getSleeve(params, noise, reshuffleCycle)
 
     current = Point(4, 0.1)
@@ -36,7 +33,13 @@ if __name__ == '__main__':
         current = RK.getNewPointWithNoise(current, params, noise)
         values_x.append(current.x)
         values_y.append(current.y)
-    plt.plot(values_x[10000:], values_y[10000:], color = 'blue', alpha = 0.5, linewidth=0.5)
+    return values_x, values_y
 
+if __name__ == '__main__':
+    params = Params.defaultWithCycle()
+    noise = 0.03
+    reshuffleCycle = True
+    values_x, values_y = sleevePlot(params, noise, reshuffleCycle)
+    plt.plot(values_x[10000:], values_y[10000:], color = 'blue', alpha = 0.5, linewidth=0.5)
     plt.title(f'Sleeve, {params}, noise: {noise}, cycle: {"normal" if not reshuffleCycle else "reshuffled"}')
     plt.show()
