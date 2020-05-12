@@ -1,8 +1,9 @@
 import math
+
 import matplotlib.pyplot as plt
 
 from coolStuff.limitCycle import getLimitCycle
-from defines import Model, Params, Point, sq, transformPointList, split_list
+from defines import Model, Params, Point, sq, unzip, split_list
 
 def getFTS(params: Params, limitCycle: [] = None, reshuffleCycle: bool = False):
     cycle = getLimitCycle(params) if limitCycle is None else limitCycle
@@ -24,9 +25,7 @@ def getFTS(params: Params, limitCycle: [] = None, reshuffleCycle: bool = False):
 
 if __name__ == '__main__':
     params = Params.defaultWithCycle()
-    points = getFTS(params)
-    x, y = transformPointList(points)
-
+    x, y = unzip(getFTS(params))
     plt.plot(x, y, color = 'red', alpha = 0.7)
 
     plt.title(f'FTS, {params}')

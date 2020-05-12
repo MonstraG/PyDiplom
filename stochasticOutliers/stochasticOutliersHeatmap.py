@@ -1,55 +1,49 @@
-from defines import *
+import time
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import time
+
+from defines import *
 
 mpl.rcParams['figure.dpi'] = 120
 
-def drawHeatmap(noise: float, extent: [] = None):
+def drawHeatMap(noise: float, extent: [] = None, steps: int = 20000):
     points = []
     if extent is not None:
         points = [Point(extent[0], extent[2]), Point(extent[1], extent[3])]
-    def modelForAWhile(point: Point, params: Params):
-        current = point
-        for _ in range(20000):
-            points.append(current)
-            current = RK.getNewPointWithNoise(current, params, noise)
 
     params = Params(0.01, 0.02, 0.13)
     startingPoint = Model.getStationaryPoint(params)
-    startingPoint.y += 0.02
+    startingPoint.y += 0.02  # somewhere near stationary point
 
     timestamps = []
     iterations = 300
     for i in range(iterations):
         startTime = time.time()
-        modelForAWhile(startingPoint, params)
-        elapsedTime = time.time() - startTime
-
-        timestamps.append(elapsedTime)
+        points += [_ for _ in RK.genPointNoise(params, noise, steps, startingPoint)]
+        timestamps.append(time.time() - startTime)
         eta = (iterations - i) * sum(timestamps) / len(timestamps)
         print(f'Finished iteration {i}, elapsed time: {format(sum(timestamps), ".3f")} sec., ETA: {format(eta, ".3f")} sec.')
 
-    x, y = transformPointList(points)
-    heatmap, xedges, yedges = np.histogram2d(x, y, bins=(300, 222))
+    x, y = unzip(points)
+    heatMap, xedges, yedges = np.histogram2d(x, y, bins = (300, 222))
     extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
     aspect = (extent[1] - extent[0]) / (extent[3] - extent[2])
 
-    def log(matrix):
-        with np.errstate(divide = 'ignore'):
-            res = np.log2(matrix)
-            res[np.isneginf(res)] = 0
-            return res
+    heatMap = log(heatMap)
 
-    heatmap = log(heatmap)
-
-    plt.imshow(heatmap.T, extent=extent, aspect=aspect, origin='lower')
+    plt.imshow(heatMap.T, extent = extent, aspect = aspect, origin = 'lower')
     return extent
 
+def log(matrix):
+    with np.errstate(divide = 'ignore'):
+        res = np.log2(matrix)
+        res[np.isneginf(res)] = 0
+        return res
 
 plt.subplot(1, 2, 1)
-extent = drawHeatmap(0.3)
+extent = drawHeatMap(0.3)
 
 plt.subplot(1, 2, 2)
-_ = drawHeatmap(0.05, extent)
+_ = drawHeatMap(0.05, extent)
 plt.show()

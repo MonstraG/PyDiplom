@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-from defines import RK, Model, Point, Params, transformPointList
+from defines import RK, Model, Point, Params, unzip
 
 def getLimitCycle(params: Params, intersectEpsilon: float = 0.000001):
     current = Point(4.0, 0.1)
@@ -27,10 +27,8 @@ def getLimitCycle(params: Params, intersectEpsilon: float = 0.000001):
 if __name__ == '__main__':
     params = Params.defaultWithCycle()
     intersectEpsilon = 0.000001
-    points = getLimitCycle(params, intersectEpsilon)
-
-    x, y = transformPointList(points)
-    plt.plot(x, y, color='blue', alpha=0.7)
+    x, y = unzip(getLimitCycle(params, intersectEpsilon))
+    plt.plot(x, y, color = 'blue', alpha = 0.7)
 
     plt.title(f'Limit cycle (intersectEpsilon: {intersectEpsilon})\n {params}')
     plt.grid(True)

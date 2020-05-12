@@ -1,5 +1,6 @@
-import numpy as np
 from typing import List
+
+import numpy as np
 
 def toStr(num: float) -> str:
     return str(float(f'{num:.4f}'))
@@ -13,9 +14,12 @@ class Point:
         return self.__str__()
 
     def __str__(self):
-        return f'Point({self.x}, {self.y})'
+        return f'{self.__class__.__name__}({self.x}, {self.y})'
 
-def transformPointList(points: List[Point]) -> (List[float], List[float]):
+    def unzip(self) -> [float, float]:
+        return [self.x, self.y]
+
+def unzip(points: List[Point]) -> (List[float], List[float]):
     return [p.x for p in points], [p.y for p in points]
 
 class Params:
@@ -28,7 +32,7 @@ class Params:
         return self.__str__()
 
     def __str__(self):
-        return f'Params(step: {toStr(self.step)}, a:{toStr(self.a)}, b:{toStr(self.b)})'
+        return f'{self.__class__.__name__}(step: {toStr(self.step)}, a:{toStr(self.a)}, b:{toStr(self.b)})'
 
     @staticmethod
     def defaultWithCycle():
@@ -36,7 +40,7 @@ class Params:
 
 rt = lambda x: x ** .5
 sq = lambda x: x ** 2
-noiseShift = lambda: np.random.normal(size = 2).tolist()
+noiseShift = lambda: np.random.normal(size = 1)
 
 class Model:
     aPlusBSq = staticmethod(lambda p: p.a + sq(p.b))
@@ -64,10 +68,9 @@ class RK:
     @staticmethod
     def getNewPointWithNoise(prev: Point, params: Params, noise: float) -> Point:
         newPoint = RK.getNewPoint(prev, params)
-        noise_x, noise_y = noiseShift()
         return Point(
-            newPoint.x + noise * rt(params.step) * noise_x * prev.x,
-            newPoint.y + noise * rt(params.step) * noise_y * prev.y
+            newPoint.x + noise * rt(params.step) * noiseShift() * prev.x,
+            newPoint.y + noise * rt(params.step) * noiseShift() * prev.y
         )
 
     @staticmethod
@@ -82,19 +85,35 @@ class RK:
 
     @staticmethod
     def getNewPoint(prev: Point, params: Params) -> Point:
-        K1 = params.step * RK.__f(prev, params, 0.0, 0.0)
-        L1 = params.step * RK.__g(prev, params, 0.0, 0.0)
-        K2 = params.step * RK.__f(prev, params, K1 / 2, L1 / 2)
-        L2 = params.step * RK.__g(prev, params, K1 / 2, L1 / 2)
-        K3 = params.step * RK.__f(prev, params, K2 / 2, L2 / 2)
-        L3 = params.step * RK.__g(prev, params, K2 / 2, L2 / 2)
-        K4 = params.step * RK.__f(prev, params, K3, L3)
-        L4 = params.step * RK.__g(prev, params, K3, L3)
+        K1, L1 = (params.step * RK.__f(prev, params, 0.0, 0.0),
+                  params.step * RK.__g(prev, params, 0.0, 0.0))
+        K2, L2 = (params.step * RK.__f(prev, params, K1 / 2, L1 / 2),
+                  params.step * RK.__g(prev, params, K1 / 2, L1 / 2))
+        K3, L3 = (params.step * RK.__f(prev, params, K2 / 2, L2 / 2),
+                  params.step * RK.__g(prev, params, K2 / 2, L2 / 2))
+        K4, L4 = (params.step * RK.__f(prev, params, K3, L3),
+                  params.step * RK.__g(prev, params, K3, L3))
         return Point(
             prev.x + 1.0 / 6.0 * (K1 + 2 * K2 + 2 * K3 + K4),
             prev.y + 1.0 / 6.0 * (L1 + 2 * L2 + 2 * L3 + L4)
         )
 
+    @staticmethod
+    def genPoint(params: Params, steps: int, start: Point = None):
+        if start is None:
+            start = Model.getStationaryPoint(params)
+        for _ in range(steps):
+            yield start
+            start = RK.getNewPoint(start, params)
+
+    @staticmethod
+    def genPointNoise(params: Params, noise: float, steps: int, start: Point = None):
+        if start is None:
+            start = Model.getStationaryPoint(params)
+        for _ in range(steps):
+            yield start
+            start = RK.getNewPointWithNoise(start, params, noise)
+
 def split_list(a_list):
-    half = len(a_list)//2
+    half = len(a_list) // 2
     return a_list[:half], a_list[half:]
