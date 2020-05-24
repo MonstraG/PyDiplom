@@ -1,8 +1,8 @@
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-from coolStuff.fts import getFTS
-from coolStuff.limitCycle import getLimitCycle
+from modelling.stochasticAnalysis.FTS import getFTS
+from modelling.stochasticAnalysis.limitCycle import getLimitCycle
 from defines import Params, Model, rt, Point, unzip, RK
 
 mpl.rcParams['figure.dpi'] = 140
@@ -33,7 +33,8 @@ if __name__ == '__main__':
     params = Params.defaultWithCycle()
     noise = 0.03
     reshuffleCycle = True
-    values_x, values_y = unzip(sleevePlot(params, noise, reshuffleCycle))
-    plt.plot(values_x[10000:], values_y[10000:], color = 'blue', alpha = 0.5, linewidth = 0.5)
-    plt.title(f'Sleeve, {params}, noise: {noise}, cycle: {"normal" if not reshuffleCycle else "reshuffled"}')
+    x, y = unzip(sleevePlot(params, noise, reshuffleCycle))
+    plt.plot(x[10000:], y[10000:], color = 'blue', alpha = 0.5, linewidth = 0.5)
+    plt.grid(True)
+    plt.title(f'Доверительна полоса, {params}, шум: {noise}, {"цикл обращен" if reshuffleCycle else ""}')
     plt.show()

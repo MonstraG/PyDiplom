@@ -12,6 +12,6 @@ steps = 1000000
 startingPoint = Model.getStationaryPoint(params)
 x, y = unzip([_ for _ in RK.genPointNoise(params, noise, steps, startingPoint)])
 plt.plot(x, y, color = 'blue', alpha = 0.33)
-plt.title(f'Stochastic outliers\nstart: {startingPoint}\n{params}\n'
-          f'steps: {steps}, noise: {noise}')
+plt.title(f'Стохастические выбросы\nначало: {startingPoint}\n{params}\n'
+          f'шаги: {steps}, шум: {noise}')
 plt.show()

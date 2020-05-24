@@ -2,7 +2,7 @@ import math
 
 import matplotlib.pyplot as plt
 
-from coolStuff.limitCycle import getLimitCycle
+from modelling.stochasticAnalysis.limitCycle import getLimitCycle
 from defines import Model, Params, Point, sq, unzip, split_list
 
 # function of stochastic sensitivity
@@ -29,6 +29,6 @@ if __name__ == '__main__':
     x, y = unzip(getFTS(params))
     plt.plot(x, y, color = 'red', alpha = 0.7)
 
-    plt.title(f'FTS, {params}')
+    plt.title(f'ФСЧ, {params}')
     plt.grid(True)
     plt.show()

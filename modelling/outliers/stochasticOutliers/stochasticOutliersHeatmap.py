@@ -23,7 +23,7 @@ def drawHeatMap(noise: float, extent: [] = None, steps: int = 20000):
         points += [_ for _ in RK.genPointNoise(params, noise, steps, startingPoint)]
         timestamps.append(time.time() - startTime)
         eta = (iterations - i) * sum(timestamps) / len(timestamps)
-        print(f'Finished iteration {i}, elapsed time: {format(sum(timestamps), ".3f")} sec., ETA: {format(eta, ".3f")} sec.')
+        print(f'Закочил итерацию {i}, прошло: {toStr(sum(timestamps))} сек., Осталось: {toStr(eta)} Сек.')
 
     x, y = unzip(points)
     heatMap, xedges, yedges = np.histogram2d(x, y, bins = (300, 222))

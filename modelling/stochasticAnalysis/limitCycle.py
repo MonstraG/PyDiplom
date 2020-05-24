@@ -30,6 +30,6 @@ if __name__ == '__main__':
     x, y = unzip(getLimitCycle(params, intersectEpsilon))
     plt.plot(x, y, color = 'blue', alpha = 0.7)
 
-    plt.title(f'Limit cycle (intersectEpsilon: {intersectEpsilon})\n {params}')
+    plt.title(f'Предельный цикл (эпсилон пересечения: {intersectEpsilon})\n {params}')
     plt.grid(True)
     plt.show()

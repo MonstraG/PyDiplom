@@ -3,7 +3,7 @@ from typing import List
 import numpy as np
 
 def toStr(num: float) -> str:
-    return str(float(f'{num:.4f}'))
+    return str(float(f'{num:.3f}'))
 
 class Point:
     def __init__(self, x, y):
@@ -32,7 +32,7 @@ class Params:
         return self.__str__()
 
     def __str__(self):
-        return f'{self.__class__.__name__}(step: {toStr(self.step)}, a:{toStr(self.a)}, b:{toStr(self.b)})'
+        return f'{self.__class__.__name__}(шаг: {toStr(self.step)}, a:{toStr(self.a)}, b:{toStr(self.b)})'
 
     @staticmethod
     def defaultWithCycle():

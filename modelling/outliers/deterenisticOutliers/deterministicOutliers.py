@@ -42,7 +42,7 @@ def lines(params: Params):
     for line in results:
         x, y = unzip(line)
         plt.plot(x, y, color = 'blue', alpha = 0.5)
-    plt.title(f'Deterministic outliers\nx: {xFor}, y: {yFor}\n{params}')
+    plt.title(f'Детерменированные выбросы\nx: {xFor}, y: {yFor}\n{params}')
 
 def repulsive(params: Params):
     params.step = -params.step
