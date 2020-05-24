@@ -2,7 +2,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 from defines import Params, RK, toStr, unzip
-from ellipse import drawEllipse
+from confidenceEllipse import drawEllipse
 
 mpl.rcParams['figure.dpi'] = 120
 

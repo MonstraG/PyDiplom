@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from coolStuff.limitCycle import getLimitCycle
 from defines import Model, Params, Point, sq, unzip, split_list
 
+# function of stochastic sensitivity
 def getFTS(params: Params, limitCycle: [] = None, reshuffleCycle: bool = False):
     cycle = getLimitCycle(params) if limitCycle is None else limitCycle
     if reshuffleCycle:

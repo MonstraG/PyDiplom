@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 from defines import *
 from deterenisticOutliers.deterministicOutliers import lines, repulsive
-from ellipse import drawEllipse
+from confidenceEllipse import drawEllipse
 
 mpl.rcParams['figure.dpi'] = 120
 
