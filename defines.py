@@ -1,5 +1,3 @@
-from typing import List
-
 import numpy as np
 
 def toStr(num: float) -> str:
@@ -19,8 +17,8 @@ class Point:
     def unzip(self) -> [float, float]:
         return [self.x, self.y]
 
-def unzip(points: List[Point]) -> (List[float], List[float]):
-    return [p.x for p in points], [p.y for p in points]
+def unzip(points: [Point]) -> [(float, float)]:
+    return zip(*[(p.x, p.y) for p in points])
 
 class Params:
     def __init__(self, step: float, a: float, b: float):
@@ -69,8 +67,8 @@ class RK:
     def getNewPointWithNoise(prev: Point, params: Params, noise: float) -> Point:
         newPoint = RK.getNewPoint(prev, params)
         return Point(
-            newPoint.x + noise * rt(params.step) * noiseShift() * prev.x,
-            newPoint.y + noise * rt(params.step) * noiseShift() * prev.y
+            newPoint.x + noise * rt(params.step) * noiseShift()[0] * prev.x,
+            newPoint.y + noise * rt(params.step) * noiseShift()[0] * prev.y
         )
 
     @staticmethod
@@ -99,7 +97,7 @@ class RK:
         )
 
     @staticmethod
-    def genPoint(params: Params, steps: int, start: Point = None):
+    def genPoint(params: Params, steps: int, start: Point = None) -> Point:
         if start is None:
             start = Model.getStationaryPoint(params)
         for _ in range(steps):
@@ -107,7 +105,7 @@ class RK:
             start = RK.getNewPoint(start, params)
 
     @staticmethod
-    def genPointNoise(params: Params, noise: float, steps: int, start: Point = None):
+    def genPointNoise(params: Params, noise: float, steps: int, start: Point = None) -> Point:
         if start is None:
             start = Model.getStationaryPoint(params)
         for _ in range(steps):
