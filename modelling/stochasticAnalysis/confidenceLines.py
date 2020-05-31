@@ -1,3 +1,5 @@
+from typing import Generator
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
@@ -25,9 +27,9 @@ def getSleeve(params: Params, noise: float, reshuffleCycle: bool = False):
     x, y = unzip(result2)
     plt.plot(x, y, color = 'red', alpha = 0.7)
 
-def sleevePlot(params: Params, noise: float, reshuffleCycle: bool):
+def sleevePlot(params: Params, noise: float, reshuffleCycle: bool = False, steps: int = 5000000) -> Generator[Point, None, None]:
     getSleeve(params, noise, reshuffleCycle)
-    return RK.genPointNoise(params, noise, 5000000, Point(2, 0.1))
+    return RK.genPointNoise(params, noise, steps, Point(2, 0.1))
 
 if __name__ == '__main__':
     params = Params.defaultWithCycle()

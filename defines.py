@@ -1,3 +1,5 @@
+from typing import Generator, List, Union
+
 import numpy as np
 
 def toStr(num: float) -> str:
@@ -17,7 +19,7 @@ class Point:
     def unzip(self) -> [float, float]:
         return [self.x, self.y]
 
-def unzip(points: [Point]) -> [(float, float)]:
+def unzip(points: Union[Generator[Point, None, None], List[Point]]) -> (List[float], List[float]):
     return zip(*[(p.x, p.y) for p in points])
 
 class Params:
@@ -97,7 +99,7 @@ class RK:
         )
 
     @staticmethod
-    def genPoint(params: Params, steps: int, start: Point = None) -> Point:
+    def genPoint(params: Params, steps: int, start: Point = None) -> Generator[Point, None, None]:
         if start is None:
             start = Model.getStationaryPoint(params)
         for _ in range(steps):
@@ -105,7 +107,7 @@ class RK:
             start = RK.getNewPoint(start, params)
 
     @staticmethod
-    def genPointNoise(params: Params, noise: float, steps: int, start: Point = None) -> Point:
+    def genPointNoise(params: Params, noise: float, steps: int, start: Point = None) -> Generator[Point, None, None]:
         if start is None:
             start = Model.getStationaryPoint(params)
         for _ in range(steps):

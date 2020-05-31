@@ -26,9 +26,8 @@ def getSSF(params: Params, limitCycle: [] = None, reshuffleCycle: bool = False):
 
 if __name__ == '__main__':
     params = Params.defaultWithCycle()
-    x, y = unzip(getSSF(params))
+    x, y = unzip(getSSF(params, None, True))
     plt.plot(x, y, color = 'red', alpha = 0.7)
-
-    plt.title(f'ФСЧ , {params}')
+    plt.title(f'ФСЧ, {params}')
     plt.grid(True)
     plt.show()

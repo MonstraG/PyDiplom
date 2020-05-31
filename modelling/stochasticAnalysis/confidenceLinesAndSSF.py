@@ -17,7 +17,7 @@ x, y = unzip(sleevePlot(params, noise, reshuffleCycle))
 plt.plot(x[10000:], y[10000:], color = 'blue', alpha = 0.5, linewidth = 0.5)
 plt.title(f'Доверительная полоса и ФСЧ, {params},')
 
-# fts
+# ssf
 plt.subplot(122)
 x, y = unzip(getSSF(params, None, reshuffleCycle))
 plt.plot(x, y, color = 'red', alpha = 0.7)

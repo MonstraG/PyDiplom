@@ -7,7 +7,7 @@ from defines import *
 
 mpl.rcParams['figure.dpi'] = 120
 
-def drawHeatMap(noise: float, extent: [] = None, steps: int = 30000):
+def drawHeatMap(iterations: int, noise: float, extent: [] = None, steps: int = 30000):
     points = []
     if extent is not None:
         points = [Point(extent[0], extent[2]), Point(extent[1], extent[3])]
@@ -16,7 +16,6 @@ def drawHeatMap(noise: float, extent: [] = None, steps: int = 30000):
     startingPoint = Model.getStationaryPoint(params)
 
     timestamps = []
-    iterations = 300
     for i in range(iterations):
         startTime = time.time()
         points += RK.genPointNoise(params, noise, steps, startingPoint)
@@ -40,9 +39,18 @@ def log(matrix):
         res[np.isneginf(res)] = 0
         return res
 
+iterations = 50
+steps = 30000
+
 plt.subplot(1, 2, 1)
-extent = drawHeatMap(0.01)
+noise = 0.01
+plt.title(f'шум={noise}')
+extent = drawHeatMap(iterations, noise, extent=None, steps=steps)
 
 plt.subplot(1, 2, 2)
-_ = drawHeatMap(0.04, extent)
+noise = 0.04
+plt.title(f'шум={noise}')
+_ = drawHeatMap(iterations, noise, extent=extent, steps=steps)
+
+plt.suptitle(f'Тепловая карта стохастических выбросов\n{iterations} итераций по {steps} шагов')
 plt.show()
