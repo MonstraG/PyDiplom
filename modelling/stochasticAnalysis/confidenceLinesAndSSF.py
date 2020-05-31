@@ -1,7 +1,7 @@
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-from modelling.stochasticAnalysis.FTS import getFTS
+from modelling.stochasticAnalysis.SSF import getSSF
 from modelling.stochasticAnalysis.confidenceLines import sleevePlot
 from defines import Params, unzip
 
@@ -19,7 +19,7 @@ plt.title(f'Доверительная полоса и ФСЧ, {params},')
 
 # fts
 plt.subplot(122)
-x, y = unzip(getFTS(params, None, reshuffleCycle))
+x, y = unzip(getSSF(params, None, reshuffleCycle))
 plt.plot(x, y, color = 'red', alpha = 0.7)
 plt.grid(True)
 plt.title(f' шум: {noise}, {"цикл обращен" if reshuffleCycle else ""}')

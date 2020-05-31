@@ -9,9 +9,6 @@ from defines import *
 mpl.rcParams['figure.dpi'] = 120
 plt.grid(True)
 
-def modelFor(point: Point, params: Params, amount: int) -> List[Point]:
-    return [_ for _ in RK.genPoint(params, amount, point)]
-
 # [start, stop]
 class Range:
     def __init__(self, start: float, step: float, stop: float):
@@ -38,7 +35,7 @@ class Range:
 def lines(params: Params):
     xFor = Range(.2, .05, .4)
     yFor = Range(3.0, .25, 3.5)
-    results = [modelFor(Point(x, y), params, 5000) for x, y in product(xFor, yFor)]
+    results = [RK.genPoint(params, 30000, Point(x, y)) for x, y in product(xFor, yFor)]
     for line in results:
         x, y = unzip(line)
         plt.plot(x, y, color = 'blue', alpha = 0.5)
@@ -48,13 +45,14 @@ def repulsive(params: Params):
     params.step = -params.step
     startingPoints = [Point(0.5, 1.5)]
 
-    results = [modelFor(point, params, 1000) for point in startingPoints]
+    results = [RK.genPoint(params, 1000, point) for point in startingPoints]
     for line in results:
         x, y = unzip(line)
+        print(x[-1], y[-1])
         plt.plot(x, y, color = 'red', alpha = 0.5)
 
 if __name__ == '__main__':
     params = Params(0.01, 0.02, 0.13)
     lines(params)
-    repulsive(params)
+    # repulsive(params)
     plt.show()

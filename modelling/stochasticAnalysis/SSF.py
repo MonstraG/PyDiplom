@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 from modelling.stochasticAnalysis.limitCycle import getLimitCycle
 from defines import Model, Params, Point, sq, unzip, split_list
 
-# function of stochastic sensitivity
-def getFTS(params: Params, limitCycle: [] = None, reshuffleCycle: bool = False):
+# Stochastic sensitivity function
+def getSSF(params: Params, limitCycle: [] = None, reshuffleCycle: bool = False):
     cycle = getLimitCycle(params) if limitCycle is None else limitCycle
     if reshuffleCycle:
         left, right = split_list(cycle)
@@ -17,7 +17,7 @@ def getFTS(params: Params, limitCycle: [] = None, reshuffleCycle: bool = False):
         p = Model.getSystemPointNormalized(cyclePoint, params)
         a = (p.x * (p.x * (gx + fy) + p.x * 2 * fx) +
              p.y * (p.y * (gx + fy) + p.y * 2 * gy))
-        r.append(r[-1] * (math.e ** (a * params.step)))
+        r.append(r[-1] * math.e ** (a * params.step))
         b = sq(p.x) * sq(cyclePoint.x) + sq(p.y) * sq(cyclePoint.y)
         h.append(h[-1] + b / r[-1] * params.step)
 
@@ -26,9 +26,9 @@ def getFTS(params: Params, limitCycle: [] = None, reshuffleCycle: bool = False):
 
 if __name__ == '__main__':
     params = Params.defaultWithCycle()
-    x, y = unzip(getFTS(params))
+    x, y = unzip(getSSF(params))
     plt.plot(x, y, color = 'red', alpha = 0.7)
 
-    plt.title(f'ФСЧ, {params}')
+    plt.title(f'ФСЧ , {params}')
     plt.grid(True)
     plt.show()

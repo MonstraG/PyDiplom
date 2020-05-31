@@ -18,7 +18,7 @@ for _ in range(5):
     stPoint = Model.getStationaryPoint(params)
     for shift_x, shift_y in zip(shifts_x, shifts_y):
         point = Point(stPoint.x + shift_x, stPoint.y + shift_y)
-        x, y = unzip([x for x in RK.genPoint(params, number_of_steps, point)])
+        x, y = unzip(RK.genPoint(params, number_of_steps, point))
         plt.plot(x, y, color = 'blue', alpha = 0.5)
     plt.title(params)
     plt.grid(True)
