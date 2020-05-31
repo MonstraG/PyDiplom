@@ -1,7 +1,7 @@
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-from modelling.stochasticAnalysis.confidenceLines import sleevePlot
+from modelling.stochasticAnalysis.confidenceLines.lines import sleevePlot
 from defines import Params, unzip
 
 mpl.rcParams['figure.dpi'] = 120

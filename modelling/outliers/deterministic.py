@@ -54,5 +54,5 @@ def repulsive(params: Params):
 if __name__ == '__main__':
     params = Params(0.01, 0.02, 0.13)
     lines(params)
-    # repulsive(params)
+    repulsive(params)
     plt.show()

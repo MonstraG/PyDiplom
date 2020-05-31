@@ -2,7 +2,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 from defines import *
-from modelling.outliers.deterenisticOutliers.deterministicOutliers import lines, repulsive
+from modelling.outliers.deterministic import lines, repulsive
 from modelling.confidenceEllipse import drawEllipse
 
 mpl.rcParams['figure.dpi'] = 120

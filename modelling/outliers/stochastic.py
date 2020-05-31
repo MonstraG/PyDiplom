@@ -2,7 +2,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 from defines import *
-from modelling.outliers.deterenisticOutliers.deterministicOutliers import repulsive
+from modelling.outliers.deterministic import repulsive
 
 mpl.rcParams['figure.dpi'] = 120
 plt.grid(True)
