@@ -1,9 +1,8 @@
 from typing import Generator, List, Union
 
-import numpy as np
-
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import numpy as np
 
 mpl.rcParams['figure.dpi'] = 120
 plt.grid(True)
@@ -16,91 +15,88 @@ class Point:
 def unzip(points: Union[Generator[Point, None, None], List[Point]]):
     return zip(*[(p.x, p.y) for p in points])
 
-class Params:
+rt = lambda x: x ** .5
+sq = lambda x: x ** 2
+noiseShift = lambda: np.random.normal(size=1)
+
+class Model:
     def __init__(self, step: float, a: float, b: float):
         self.step = step
         self.a = a
         self.b = b
 
     @staticmethod
-    def defaultWithCycle():
-        return Params(0.001, 0.02, 0.6)
+    def defaultWithCycle(step: float = 0.001):
+        return Model(step=step, a=0.02, b=0.6)
 
-rt = lambda x: x ** .5
-sq = lambda x: x ** 2
-noiseShift = lambda: np.random.normal(size=1)
+    aPlusBSq = property(lambda self: self.a + sq(self.b))
 
-class Model:
-    aPlusBSq = staticmethod(lambda p: p.a + sq(p.b))
+    @property
+    def stationaryPoint(self) -> Point:
+        return Point(self.b, self.b / self.aPlusBSq)
 
-    @staticmethod
-    def stationaryPoint(p: Params):
-        return Point(p.b, p.b / Model.aPlusBSq(p))
+    y = property(lambda self: 2 * sq(self.b) / self.aPlusBSq)
+    v = property(lambda self: self.aPlusBSq)
+    fx = property(lambda self: self.y - 1)
+    fy = property(lambda self: self.v)
+    gx = property(lambda self: -self.y)
+    gy = property(lambda self: -self.v)
 
-    y = staticmethod(lambda p: 2 * sq(p.b) / Model.aPlusBSq(p))
-    v = staticmethod(lambda p: Model.aPlusBSq(p))
-    fx = staticmethod(lambda p: Model.y(p) - 1)
-    fy = staticmethod(lambda p: Model.v(p))
-    gx = staticmethod(lambda p: -Model.y(p))
-    gy = staticmethod(lambda p: -Model.v(p))
+    @property
+    def differentials(self):
+        return self.fx, self.fy, self.gx, self.gy
 
-    @staticmethod
-    def getDifferentials(p: Params):
-        return Model.fx(p), Model.fy(p), Model.gx(p), Model.gy(p)
+    f = lambda self, p: -p.x + self.a * p.y + sq(p.x) * p.y
+    g = lambda self, p: self.b - self.a * p.y - sq(p.x) * p.y
 
-    f = staticmethod(lambda p, params: -p.x + params.a * p.y + sq(p.x) * p.y)
-    g = staticmethod(lambda p, params: params.b - params.a * p.y - sq(p.x) * p.y)
-
-    @staticmethod
-    def getSystemPointNormalized(p: Point, params: Params) -> Point:
-        f, g = Model.f(p, params), Model.g(p, params)
+    def getSystemPointNormalized(self, p: Point) -> Point:
+        f, g = self.f(p), self.g(p)
         divisor = rt(sq(f) + sq(g))
         return Point(-g / divisor, f / divisor)
 
 class RK:
     @staticmethod
-    def getNewPointWithNoise(prev: Point, params: Params, noise: float):
-        new = RK.getNewPoint(prev, params)
+    def _f(model: Model, prev: Point, k: float, l: float) -> float:
+        return model.f(Point(prev.x + k / 2, prev.y + l / 2))
+
+    @staticmethod
+    def _g(model: Model, prev: Point, k: float, l: float) -> float:
+        return model.g(Point(prev.x + k / 2, prev.y + l / 2))
+
+    @staticmethod
+    def getNewPoint(model: Model, prev: Point) -> Point:
+        K1, L1 = (model.step * RK._f(model, prev, 0.0, 0.0),
+                  model.step * RK._g(model, prev, 0.0, 0.0))
+        K2, L2 = (model.step * RK._f(model, prev, K1 / 2, L1 / 2),
+                  model.step * RK._g(model, prev, K1 / 2, L1 / 2))
+        K3, L3 = (model.step * RK._f(model, prev, K2 / 2, L2 / 2),
+                  model.step * RK._g(model, prev, K2 / 2, L2 / 2))
+        K4, L4 = (model.step * RK._f(model, prev, K3, L3),
+                  model.step * RK._g(model, prev, K3, L3))
         return Point(
-            new.x + noise * rt(params.step) * noiseShift()[0] * prev.x,
-            new.y + noise * rt(params.step) * noiseShift()[0] * prev.y
+            prev.x + (K1 + 2 * K2 + 2 * K3 + K4) / 6,
+            prev.y + (L1 + 2 * L2 + 2 * L3 + L4) / 6
         )
 
     @staticmethod
-    def _f(prev: Point, params: Params, k: float, l: float) -> float:
-        modifiedPrev = Point(prev.x + k / 2, prev.y + l / 2)
-        return Model.f(modifiedPrev, params)
-
-    @staticmethod
-    def _g(prev: Point, params: Params, k: float, l: float) -> float:
-        modifiedPrev = Point(prev.x + k / 2, prev.y + l / 2)
-        return Model.g(modifiedPrev, params)
-
-    @staticmethod
-    def getNewPoint(prev: Point, params: Params) -> Point:
-        K1, L1 = (params.step * RK._f(prev, params, 0.0, 0.0),
-                  params.step * RK._g(prev, params, 0.0, 0.0))
-        K2, L2 = (params.step * RK._f(prev, params, K1 / 2, L1 / 2),
-                  params.step * RK._g(prev, params, K1 / 2, L1 / 2))
-        K3, L3 = (params.step * RK._f(prev, params, K2 / 2, L2 / 2),
-                  params.step * RK._g(prev, params, K2 / 2, L2 / 2))
-        K4, L4 = (params.step * RK._f(prev, params, K3, L3),
-                  params.step * RK._g(prev, params, K3, L3))
+    def getNewPointWithNoise(model: Model, prev: Point, noise: float):
+        new = RK.getNewPoint(model, prev)
         return Point(
-            prev.x + 1.0 / 6.0 * (K1 + 2 * K2 + 2 * K3 + K4),
-            prev.y + 1.0 / 6.0 * (L1 + 2 * L2 + 2 * L3 + L4)
+            new.x + noise * rt(model.step) * noiseShift()[0] * prev.x,
+            new.y + noise * rt(model.step) * noiseShift()[0] * prev.y
         )
 
     @staticmethod
-    def genPoint(params: Params, steps: int, start: Point):
+    def genPoint(model: Model, steps: int, current: Point):
         for _ in range(steps):
-            yield start
-            start = RK.getNewPoint(start, params)
+            yield current
+            current = RK.getNewPoint(model, current)
 
     @staticmethod
-    def genPointNoise(p: Params, noise: float, steps: int, st: Point = None):
-        if st is None:
-            st = Model.stationaryPoint(p)
+    def genPointNoise(model: Model, steps: int, noise: float,
+                      current: Point = None):
+        if current is None:
+            current = model.stationaryPoint
         for _ in range(steps):
-            yield st
-            st = RK.getNewPointWithNoise(st, p, noise)
+            yield current
+            current = RK.getNewPointWithNoise(model, current, noise)

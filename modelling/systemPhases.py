@@ -8,12 +8,11 @@ shifts_y = posShifts + posShifts + negShifts + negShifts
 a, b = 0.06, 0.0
 for _ in range(5):
     b += 0.2
-    params = Params(step, a, b)
-    stPoint = Model.stationaryPoint(params)
+    model = Model(step, a, b)
     for shift_x, shift_y in zip(shifts_x, shifts_y):
-        point = Point(abs(stPoint.x + shift_x * (10 * b)),
-                      abs(stPoint.y + shift_y * (10 * b)))
-        x, y = unzip(RK.genPoint(params, number_of_steps, point))
+        point = Point(abs(model.stationaryPoint.x + shift_x * (10 * b)),
+                      abs(model.stationaryPoint.y + shift_y * (10 * b)))
+        x, y = unzip(RK.genPoint(model, number_of_steps, point))
         plt.plot(x, y, color='blue', alpha=0.5)
     plt.grid(True)
     plt.show()

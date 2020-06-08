@@ -1,13 +1,11 @@
 from defines import *
 from modelling.outliers.deterministic import repulsive
 
-params = Params(0.01, 0.02, 0.13)
-noise = 0.04
-steps = 100000
-startingPoint = Model.stationaryPoint(params)
-x, y = unzip(RK.genPointNoise(params, noise, steps, startingPoint))
+model = Model(step=0.01, a=0.02, b=0.13)
+x, y = unzip(RK.genPointNoise(model=model, steps=1000000, noise=0.04,
+                              current=model.stationaryPoint))
 plt.plot(x, y, color='blue', alpha=0.5)
 plt.plot(0, 0, alpha=0)
 plt.plot(2, 0, alpha=0)
-repulsive(params)
+repulsive(model)
 plt.show()

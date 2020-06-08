@@ -1,11 +1,10 @@
 from defines import *
-from modelling.stochasticAnalysis.confidenceEllipse import drawEllipse
 from modelling.outliers.deterministic import lines, repulsive
+from modelling.stochasticAnalysis.confidenceEllipse import drawEllipse
 
-params = Params(0.01, 0.02, 0.13)
-noise_1, noise_2 = 0.01, 0.04
-lines(params)
-drawEllipse(params, noise_1, 'green')
-drawEllipse(params, noise_2, 'red')
-repulsive(params)
+model = Model(step=0.01, a=0.02, b=0.13)
+lines(model)
+drawEllipse(model=model, noise=0.01, color='green')
+drawEllipse(model=model, noise=0.04, color='red')
+repulsive(model)
 plt.show()
