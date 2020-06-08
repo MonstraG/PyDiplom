@@ -19,10 +19,18 @@ def sleevePlot(model: Model, noise: float, steps: int):
     plt.plot(x, y, color='red', alpha=0.7)
     return RK.genPointNoise(model, steps, noise, Point(2, 0.1))
 
-if __name__ == '__main__':
-    model = Model.defaultWithCycle()
-    x, y = unzip(sleevePlot(model, noise=0.02, steps=5000000))
+def drawConfidenceLines(model: Model, noise: float, steps: int):
+    x, y = unzip(sleevePlot(model, noise, steps))
     plt.plot(x, y, color='blue', alpha=0.5, linewidth=0.5)
-    x, y = unzip(getLimitCycle(model))
-    plt.plot(x, y, color='green', alpha=0.7)
+    plt.title(f'шаги={steps}')
+
+if __name__ == '__main__':
+    one_lap = 1500  # approx
+    model = Model.defaultWithCycle(0.01)
+    noise = 0.01
+
+    plt.subplot(1, 2, 1)
+    drawConfidenceLines(model, noise, steps=one_lap * 2)
+    plt.subplot(1, 2, 2)
+    drawConfidenceLines(model, noise, steps=one_lap * 20)
     plt.show()
