@@ -5,9 +5,9 @@ posShifts = [0.05, 0.15]
 negShifts = [-x for x in posShifts]
 shifts_x = posShifts + negShifts + posShifts + negShifts
 shifts_y = posShifts + posShifts + negShifts + negShifts
-a, b = 0.06, 0.0
-for _ in range(5):
-    b += 0.2
+a, b = -0.02, 0.6
+for _ in range(2):
+    a += 0.04
     model = Model(step, a, b)
     for shift_x, shift_y in zip(shifts_x, shifts_y):
         point = Point(abs(model.stationaryPoint.x + shift_x * (10 * b)),
