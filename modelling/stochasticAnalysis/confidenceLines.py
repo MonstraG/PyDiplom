@@ -29,8 +29,8 @@ if __name__ == '__main__':
     model = Model.defaultWithCycle(0.01)
     noise = 0.01
 
-    plt.subplot(1, 2, 1)
-    drawConfidenceLines(model, noise, steps=one_lap * 2)
-    plt.subplot(1, 2, 2)
-    drawConfidenceLines(model, noise, steps=one_lap * 20)
+    # plt.subplot(1, 2, 1)
+    # drawConfidenceLines(model, noise, steps=one_lap * 1)
+    # plt.subplot(1, 2, 2)
+    drawConfidenceLines(model, noise, steps=one_lap * 5000)
     plt.show()

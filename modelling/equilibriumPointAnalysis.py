@@ -15,4 +15,20 @@ plt.xlabel('a')
 plt.ylabel('b')
 plt.text(0.05, 0.5, 'X', fontsize=14)
 plt.text(0.088, 0.23, 'Y', fontsize=14)
+plt.plot(0.005, 0.95, 'ro')
+step = 0
+models = [
+    Model(step, 0.005, 0.95),
+    Model(step, 0.06, 0.85),
+    Model(step, 0.1, 0.75),
+    Model(step, 0.005, 0.6),
+    Model(step, 0.06, 0.6),
+    Model(step, 0.12, 0.6),
+    Model(step, 0.005, 0.1),
+    Model(step, 0.06, 0.35),
+    Model(step, 0.1, 0.45)
+]
+for model in models:
+    plt.plot(model.a, model.b, 'ro')
+
 plt.show()

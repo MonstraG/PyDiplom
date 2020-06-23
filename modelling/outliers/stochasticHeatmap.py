@@ -1,5 +1,3 @@
-from itertools import chain
-
 from defines import *
 
 def drawHeatMap(iterations: int, noise: float, steps: int, extent: []):
@@ -26,7 +24,7 @@ def log(matrix):
         res[np.isneginf(res)] = 0
         return res
 
-iterations = 1
+iterations = 15
 steps = 30000
 plt.subplot(1, 2, 2)
 noise = 0.04

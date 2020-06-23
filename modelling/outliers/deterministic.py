@@ -29,7 +29,7 @@ def lines(model: Model):
         plt.plot(x, y, color='blue', alpha=0.5)
 
 def repulsive(model: Model):
-    model.step = -model.step
+    model = Model(-model.step, model.a, model.b)
     x, y = unzip(RK.genPoint(model=model, steps=1000,
                              current=Point(0.5, 1.5)))
     plt.plot(x, y, color='red', alpha=0.5)

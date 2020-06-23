@@ -31,13 +31,21 @@ def getLimitCycle(model: Model):
         current = Point(newPoint.x, newPoint.y)
 
 if __name__ == '__main__':
-    params = [
-        Model(step=0.001, a=0.005, b=0.1),
-        Model(step=0.001, a=0.12, b=0.6),
-        Model(step=0.001, a=0.005, b=0.99)
+    step = 0.001
+    models = [
+        Model(step, 0.005, 0.95),
+        Model(step, 0.06, 0.85),
+        Model(step, 0.1, 0.75),
+        Model(step, 0.005, 0.6),
+        Model(step, 0.06, 0.6),
+        Model(step, 0.12, 0.6),
+        Model(step, 0.005, 0.1),
+        Model(step, 0.06, 0.35),
+        Model(step, 0.1, 0.45)
     ]
-    for model in params:
+    for i, model in enumerate(models):
         x, y = unzip(getLimitCycle(model))
+        plt.subplot(3, 3, i + 1)
         plt.plot(x, y, color='blue', alpha=0.7)
         plt.grid(True)
-        plt.show()
+    plt.show()
